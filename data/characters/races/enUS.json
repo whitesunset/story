@@ -1,0 +1,113 @@
+{
+  "reality": {
+    "caucasoid/european": [
+      "aryan",
+      "semitic",
+      "hamitic"
+    ],
+    "negroid": [
+      "african",
+      "australoid",
+      "melanesian/papua",
+      "negrito",
+      "negrito"
+    ],
+    "mongoloid": [
+      "chinese/indochinese",
+      "japanese/korean",
+      "american",
+      "tibetan",
+      "malayan",
+      "polynesian",
+      "maori",
+      "micronesian",
+      "eskimo"
+    ]
+  },
+  "fantasy": {
+    "classic": [
+      "human",
+      "dwarf",
+      "elf",
+      "orc",
+      "troll",
+      "goblin",
+      "ogre",
+      "fairy"
+    ],
+    "wow": {
+      "alliance": [
+        "draenei",
+        "dwarf",
+        "gnome",
+        "human",
+        "night elf",
+        "pandaren"
+      ],
+      "horde": [
+        "blood elf",
+        "goblin",
+        "orc",
+        "tauren",
+        "troll",
+        "pandaren"
+      ]
+    },
+    "dnd": {
+      "core": [
+        "dragonborn",
+        "drow",
+        "dwarf",
+        "eladrin",
+        "elf/night elf",
+        "gnome/rock gnome",
+        "half-elf",
+        "half-orc",
+        "halfling/hobbit",
+        "human",
+        "tiefling"
+      ]
+    },
+    "warhammer_fantasy": {
+      "realms_of_men": [
+        "bretonnia",
+        "empire",
+        "wasteland",
+        "tilea",
+        "estalia",
+        "norsca",
+        "kislev",
+        "albion",
+        "cathay",
+        "nippon",
+        "araby",
+        "kingdoms of ind"
+      ],
+      "elves": [
+        "dark elf",
+        "high elf",
+        "wood elf"
+      ],
+      "dwarfs": [
+        "dwarf",
+        "chaos dwarf"
+      ],
+      "lizardmen": "lizardman",
+      "greenskins": [
+        "orc",
+        "goblin"
+      ],
+      "chaos": [
+        "beastmen",
+        "warrior of chaos",
+        "daemons of chaos"
+      ],
+      "skavens": "skaven",
+      "undead": [
+        "vampire count",
+        "tomb king"
+      ],
+      "ogres": "ogre"
+    }
+  }
+}

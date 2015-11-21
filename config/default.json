@@ -1,0 +1,14 @@
+{
+  "locale": "enUS",
+  "race": {
+    "setting": "reality"
+  },
+  "story": {
+    "name": {
+      "templates": [
+        "[adj] [noun|gnum]"
+      ]
+    }
+  }
+
+}
