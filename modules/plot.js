@@ -36,7 +36,7 @@ Plot.prototype.genre = function (cfg, json) {
 }
 
 Plot.prototype.name = function (cfg, json) {
-    cfg = this.getCfg(cfg);
-    cfg['templates'] = cfg['story']['name'];
+    cfg = this.getCfg(cfg);    ;
+    cfg['templates'] = cfg['story']['name']['templates']
     return Grammar.phrase(cfg, json);;
 }

@@ -19,9 +19,17 @@ Grammar.prototype.getCfg = function (cfg) {
     return this.cfg = _.extend({}, this.cfg || defaults, cfg);
 }
 
+Grammar.prototype.invoke = function (func, args) {
+    var localized = func + '_' + this.cfg.locale;
+    if(typeof this[localized] === 'function'){
+        return this[localized].apply(this, args);
+    }
+}
+
 Grammar.prototype.parse = function (template) {
     var words = template.split(' ').map(function (word) {
-        return word.replace(/[\[\]]*/gi, '');
+        var parts = word.replace(/[\[\]]*/gi, '').split('|');
+        return parts[0];
     });
     return words;
 }
@@ -32,26 +40,53 @@ Grammar.prototype.parse = function (template) {
  * @param json
  */
 Grammar.prototype.phrase = function (cfg, json) {
-    cfg = this.getCfg(cfg);
-    var noun = require('../data/dictionary/nouns/' + cfg['locale'] + '.json'),
-        verb = require('../data/dictionary/verbs/' + cfg['locale'] + '.json'),
-        adj =  require('../data/dictionary/adjectives/' + cfg['locale'] + '.json'),
+    this.cfg = this.getCfg(cfg);
+    var noun = require('../data/dictionary/nouns/' + this.cfg['locale'] + '.json'),
+        verb = require('../data/dictionary/verbs/' + this.cfg['locale'] + '.json'),
+        adj =  require('../data/dictionary/adjectives/' + this.cfg['locale'] + '.json'),
         dictionary = {
             noun: noun,
             verb: verb,
             adj: adj
         },
         json = json || dictionary,
-        templates = cfg['templates'];
+        templates = this.cfg['templates'],
+        template = Random.array.item(templates),
+        replacements = this.parse(template),
+        result = '',
+        words = [],
+        self = this;
 
-    var template = Random.array.item(templates);
-    var words = this.parse(template);
-    words.forEach(function (item, i, arr) {
-        if(item in this.parts){
-            
+    replacements.forEach(function (item, i, arr) {
+        if(_.contains(self.parts, item)){
+            words.push(self[item](dictionary[item]));
         }
-    })
-    console.log(words);
+    });
+
+    console.log(words)
+
+    return result;
+}
+
+Grammar.prototype.adj = function (dictionary) {
+    return this.invoke('adj', [dictionary]);
+}
+Grammar.prototype.adj_ruRU = function (dictionary) {
+    return Random.array.item(dictionary);
+}
+
+Grammar.prototype.noun = function (dictionary) {
+    return this.invoke('noun', [dictionary]);
+}
+Grammar.prototype.noun_ruRU = function (dictionary) {
+    var genders = ['masculine', 'feminine', 'neuter', 'plural_only'],
+        gender = Random.array.item(genders),
+        nouns = dictionary[gender],
+        result = {
+            gender: gender,
+            gnums: Random.array.item(nouns)
+        };
+    return result;
 }
 
 /**
@@ -61,10 +96,7 @@ Grammar.prototype.phrase = function (cfg, json) {
  * @param {number} num
  */
 Grammar.prototype.pluralize = function (word_forms, num) {
-    var localized = 'pluralize_' + this.cfg.locale;
-    if (typeof this[localized] === 'function') {
-        return this[localized](word_forms, num);
-    }
+    this.invoke('pluralize', [word_forms, num]);
 }
 
 /**
@@ -100,10 +132,11 @@ Grammar.prototype.pluralize_enUS = function (word_forms){
  * @returns {*}
  */
 Grammar.prototype.toCase = function (word, _case) {
-    var localized = 'toCase_' + this.cfg.locale;
+    return this.invoke('toCase', [word, _case]);
+    /*var localized = 'toCase_' + this.cfg.locale;
     if (typeof this[localized] === 'function') {
         return this[localized](word, _case);
-    }
+    }*/
 }
 
 Grammar.prototype.toCase_enUS = function (word, _case) {

@@ -7,5 +7,5 @@ var plot = require('./modules/plot'),
     Race = new race(),
     Story = new story({"locale": "ruRU"});
 
-//console.log(Story.grammar.toCase({locale: 'ruRU'}));
+//console.log(Story.grammar.toCase('молочный', 'в'));
 console.log(Story.plot.name());
