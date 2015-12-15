@@ -40,6 +40,10 @@ Grammar.prototype.parse = function (template) {
  * @param json
  */
 Grammar.prototype.phrase = function (cfg, json) {
+    return this.invoke('phrase', [cfg, json]);
+}
+
+Grammar.prototype.phrase_ruRU = function (cfg, json) {
     this.cfg = this.getCfg(cfg);
     var noun = require('../data/dictionary/nouns/' + this.cfg['locale'] + '.json'),
         verb = require('../data/dictionary/verbs/' + this.cfg['locale'] + '.json'),
@@ -59,7 +63,12 @@ Grammar.prototype.phrase = function (cfg, json) {
 
     replacements.forEach(function (item, i, arr) {
         if(_.contains(self.parts, item)){
-            words.push(self[item](dictionary[item]));
+            var word = self['select_' + item](dictionary[item])
+            if(item == 'adj' && arr[i + 1] == 'noun'){
+                var noun = arr[i + 1];
+                word = self['decline_' + item](word, noun['gnum'], noun['gender']);
+            }
+            words.push(word);
         }
     });
 
@@ -68,23 +77,61 @@ Grammar.prototype.phrase = function (cfg, json) {
     return result;
 }
 
-Grammar.prototype.adj = function (dictionary) {
-    return this.invoke('adj', [dictionary]);
+Grammar.prototype.decline_adj = function (adj, gnum, gender) {
+    var base = adj[0],
+        ending = '';
+    if(gnum == 'singular'){
+        switch (gender){
+            case 'masculine':
+                ending = adj[1];
+                break;
+            case 'feminine':
+                ending = adj[2];
+                break;
+            case 'neuter':
+                ending = adj[3];
+                break;
+            default:
+                ending = adj[1];
+                break;
+        }
+    }
+    if(gnum == 'plural'){
+        if(adj[1] == 'ой'){
+            if(_.contains(['ж','ч','ш','щ'], base.substr(-1, 1))){
+                ending = 'ие';
+            }else{
+                ending = 'ые';
+            }
+
+        }else{
+            ending = adj[1].replace(/й$/gi, 'е');
+        }
+    }
+    return base + ending;
 }
-Grammar.prototype.adj_ruRU = function (dictionary) {
+
+Grammar.prototype.select_adj = function (dictionary) {
+    return this.invoke('select_adj', [dictionary]);
+}
+Grammar.prototype.select_adj_ruRU = function (dictionary) {
     return Random.array.item(dictionary);
 }
 
-Grammar.prototype.noun = function (dictionary) {
-    return this.invoke('noun', [dictionary]);
+Grammar.prototype.select_noun = function (dictionary) {
+    return this.invoke('select_noun', [dictionary]);
 }
-Grammar.prototype.noun_ruRU = function (dictionary) {
+Grammar.prototype.select_noun_ruRU = function (dictionary) {
     var genders = ['masculine', 'feminine', 'neuter', 'plural_only'],
         gender = Random.array.item(genders),
         nouns = dictionary[gender],
+        values = Random.array.item(nouns),
+        gnum = Random.number.decimal([0, values.length - 1]),
+        human_gnum = values.length > 1 && gnum > 0 || gender == 'plural_only' ? 'plural' : 'singular';
         result = {
             gender: gender,
-            gnums: Random.array.item(nouns)
+            gnum: human_gnum,
+            value: values[gnum]
         };
     return result;
 }
